@@ -1,1 +1,26 @@
-Jeu de dames
+(1) Créer le plateau 10x10
+Définir les cases jouables et initialiser les cases vides et celles occupées par les pions
+
+(2) Créer les pions et le type de pions
+Définir les pions normaux et les dames, ainsi que le joueur auquel chaque pion appartient
+
+(3) Placer les pions sur les bonnes cases
+Placer 20 pions par joueur sur les quatre premières rangées de chaque côté
+
+(4) Créer les mouvements
+Gérer le déplacement normal d’une case en diagonale pour les pions
+Gérer le déplacement de la dame sur plusieurs cases en diagonale
+Vérifier que la case de destination est libre
+
+(5) Créer le menu permettant de sélectionner le pion et ses mouvements possibles
+Afficher les mouvements autorisés pour le pion choisi
+
+(6) Créer la fonction de capture et de transformation en dame
+Vérifier et effectuer les captures obligatoires
+Permettre les captures multiples
+Transformer le pion en dame lorsqu’il atteint la dernière rangée
+
+(7) Vérifier si la partie est terminée après chaque tour
+Si tous les pions d’un joueur sont éliminés ou si un joueur ne peut plus bouger, déclarer la fin de la partie
+Sinon, passer au joueur suivant 
+
