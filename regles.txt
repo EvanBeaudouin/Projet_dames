@@ -1,0 +1,25 @@
+Regles du jeu de dames:
+
+Plateau :
+-10×10 cases
+-cases jouables : cases foncées seulement
+-placement des pions : 20 pions par joueur, sur les 4 premières rangées de chaq>
+
+Type de pions :
+-pion normal : se déplace d’une case en diagonale vers l’avant
+-dame : se déplace en diagonale sur plusieurs cases, dans toutes les directions
+-Les pions/dames ne peuvent se déplacer que sur des cases vides
+
+Prise :
+-pour capturer un pion adverse :
+-sauter par-dessus le pion adverse en diagonale
+-la case derrière le pion adverse doit être vide
+-prise obligatoire si possible
+-les captures multiples dans un même tour sont autorisées
+
+Pion qui se transforme en dame :
+-quand un pion atteint la dernière rangée côté adverse, il devient dame
+
+Conditions de victoire :
+-éliminer tous les pions de l’adversaire
+-bloquer l’adversaire de sorte qu’il ne puisse plus bouger
