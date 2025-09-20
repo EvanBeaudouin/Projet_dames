@@ -16,5 +16,22 @@ class Grille {
                 this.grille[i][j]=" ";
             }
         }
-    }  
+    } 
+    public afficherGrille(): void {
+        let ligne = "";
+        for (let k = 0; k < this.taille; k++) {
+            ligne += "+-----";
+        }
+        ligne += "+";
+        for (let i = 0; i < this.taille; i++) {
+            console.log(ligne);
+            let row = "";
+            for (let j = 0; j < this.taille; j++) {
+                row += `|  ${this.grille[i][j]}  `;
+            }
+            console.log(row + "|");
+        }
+        console.log(ligne);
+    } 
 }
+
