@@ -34,4 +34,5 @@ class Grille {
         console.log(ligne);
     } 
 }
-
+let test1 = new Grille();
+test1.afficherGrille();
