@@ -6,6 +6,7 @@ class Grille {
         this.taille=taille
         this.grille=[];
         this.initialiserGrille();
+        this.placerPions();
     }
 
     private initialiserGrille(): void {
@@ -33,6 +34,20 @@ class Grille {
         }
         console.log(ligne);
     } 
+    private placerPions(): void {
+        for (let i = 0; i < 4; i++) {
+            let start = i % 2;
+            for (let j = start; j < this.taille; j += 2) {
+                this.grille[i][j] = "N";
+            }
+        }
+        for (let k = this.taille - 4; k < this.taille; k++) {
+            let start = k % 2; 
+            for (let l = start; l < this.taille; l += 2) {
+                this.grille[k][l] = "B";
+            }
+        }
+    }
 }
 let test1 = new Grille();
 test1.afficherGrille();
