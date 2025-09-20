@@ -49,5 +49,32 @@ class Grille {
         }
     }
 }
+class Pion {
+    public type: "pion" | "dame";
+    public couleur: "N" | "B";
+    public elimine: boolean;
+
+    constructor(couleur: "N" | "B") {
+        this.type = "pion";
+        this.couleur = couleur;
+        this.elimine = false;
+    }
+
+    public transformerEnDame(): void {
+        this.type = "dame";
+    }
+
+    public eliminer(): void {
+        this.elimine = true;
+    }
+
+    public getSymbole(): string {
+    if (this.type === "dame") {
+        return this.couleur + "D";
+    } else {
+        return this.couleur;
+    }
+}
+}
 let test1 = new Grille();
 test1.afficherGrille();
