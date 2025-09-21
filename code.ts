@@ -214,6 +214,15 @@ public capturerPion(x: number, y: number, direction: "gauche" | "droite"): boole
 
     return true;
 }
+private joueurActuel: "N" | "B" = "N";
+
+private changerJoueur() {
+    if (this.joueurActuel === "N") {
+        this.joueurActuel = "B";
+    } else {
+        this.joueurActuel = "N";
+    }
+}
 }
 
 class Pion {
