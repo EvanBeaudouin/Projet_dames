@@ -57,14 +57,17 @@ class Grille {
         }
     }
 
-    public deplacerPion(x: number, y: number, direction: "gauche" | "droite"): boolean {
-        const pion = this.grille[x][y];
-        if (!pion) {
-            console.log("Pas de pion à cette position !");
-            return false;
-        }
-        let newX: number;
-        let newY: number;
+    public deplacerPion(x: number, y: number, direction: "gauche" | "droite", cases?: number): boolean {
+    const pion = this.grille[x][y];
+    if (!pion) {
+        console.log("Pas de pion à cette position !");
+        return false;
+    }
+
+    let newX: number;
+    let newY: number;
+
+    if (pion.type === "pion") {
         if (pion.couleur === "N") {
             newX = x + 1;
         } else {
@@ -94,8 +97,70 @@ class Grille {
             (pion.couleur === "B" && newX === 0)) {
             pion.transformerEnDame();
         }
+
+        return true;
+    } 
+    else { // pion.type === "dame"
+        if (!cases || cases < 1) {
+            console.log("Veuillez indiquer un nombre de cases pour la dame !");
+            return false;
+        }
+
+        if (pion.couleur === "N") {
+            newX = x + cases;
+        } else {
+            newX = x - cases;
+        }
+
+        if (direction === "gauche") {
+            newY = y - cases;
+        } else {
+            newY = y + cases;
+        }
+
+        if (newX < 0 || newX >= this.taille || newY < 0 || newY >= this.taille) {
+            console.log("Déplacement hors de la grille !");
+            return false;
+        }
+
+        if (this.grille[newX][newY] !== null) {
+            console.log("La case d'arrivée est occupée !");
+            return false;
+        }
+
+        let stepX: number;
+        let stepY: number;
+
+        if (newX > x) {
+            stepX = 1;
+        } else {
+            stepX = -1;
+        }
+
+        if (newY > y) {
+            stepY = 1;
+        } else {
+            stepY = -1;
+        }
+
+        let checkX = x + stepX;
+        let checkY = y + stepY;
+
+        while (checkX !== newX && checkY !== newY) {
+            if (this.grille[checkX][checkY] !== null) {
+                console.log("Chemin bloqué pour la dame !");
+                return false;
+            }
+            checkX += stepX;
+            checkY += stepY;
+        }
+
+        this.grille[newX][newY] = pion;
+        this.grille[x][y] = null;
+
         return true;
     }
+}
 }
 
 class Pion {
@@ -125,5 +190,5 @@ class Pion {
 let test1 = new Grille();
 test1.afficherGrille();
 test1.deplacerPion(3, 1, "droite");
+console.log("Mis à jour de la grille")
 test1.afficherGrille();
-
