@@ -100,7 +100,7 @@ class Grille {
 
         return true;
     } 
-    else { // pion.type === "dame"
+    else {
         if (!cases || cases < 1) {
             console.log("Veuillez indiquer un nombre de cases pour la dame !");
             return false;
@@ -161,6 +161,58 @@ class Grille {
         return true;
     }
 }
+public capturerPion(x: number, y: number, direction: "gauche" | "droite"): boolean {
+    const pion = this.grille[x][y];
+    if (!pion) {
+        console.log("Pas de pion à cette position !");
+        return false;
+    }
+
+    let dx: number;
+    if (pion.couleur === "N") {
+        dx = 2; 
+    } else {
+        dx = -2; 
+    }
+
+    let dy: number;
+    if (direction === "gauche") {
+        dy = -2;
+    } else {
+        dy = 2;
+    }
+
+    const cibleX = x + dx;
+    const cibleY = y + dy;
+    const milieuX = x + dx / 2;
+    const milieuY = y + dy / 2;
+
+    if (cibleX < 0 || cibleX >= this.taille || cibleY < 0 || cibleY >= this.taille) {
+        console.log("Déplacement hors de la grille !");
+        return false;
+    }
+
+    const pionMilieu = this.grille[milieuX][milieuY];
+    if (!pionMilieu || pionMilieu.couleur === pion.couleur) {
+        console.log("Aucun pion adverse à capturer !");
+        return false;
+    }
+
+    if (this.grille[cibleX][cibleY] !== null) {
+        console.log("La case d'arrivée est occupée !");
+        return false;
+    }
+    this.grille[cibleX][cibleY] = pion;
+    this.grille[x][y] = null;
+    pionMilieu.eliminer();
+    this.grille[milieuX][milieuY] = null;
+    if ((pion.couleur === "N" && cibleX === this.taille - 1) ||
+        (pion.couleur === "B" && cibleX === 0)) {
+        pion.transformerEnDame();
+    }
+
+    return true;
+}
 }
 
 class Pion {
@@ -190,5 +242,7 @@ class Pion {
 let test1 = new Grille();
 test1.afficherGrille();
 test1.deplacerPion(3, 1, "droite");
-console.log("Mis à jour de la grille")
+console.log("Mis à jour de la grille");
 test1.afficherGrille();
+test1.deplacerPion(6, 0, "droite");
+
