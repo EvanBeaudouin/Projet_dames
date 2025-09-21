@@ -223,6 +223,31 @@ private changerJoueur() {
         this.joueurActuel = "N";
     }
 }
+private pionBloque(x: number, y: number): boolean {
+    const pion = this.grille[x][y];
+    if (!pion || pion.elimine) {
+        return true; // Pas de pion → considéré bloqué
+    }
+    const directions = [
+        {dx: 1, dy: 1},   
+        {dx: 1, dy: -1},  
+        {dx: -1, dy: 1},  
+        {dx: -1, dy: -1}  
+    ];
+    for (let dir of directions) {
+        let x1 = x + dir.dx;
+        let y1 = y + dir.dy;
+        let x2 = x + 2 * dir.dx;
+        let y2 = y + 2 * dir.dy;
+        if (
+            (x1 >= 0 && x1 < this.taille && y1 >= 0 && y1 < this.taille && this.grille[x1][y1] === null) ||
+            (x2 >= 0 && x2 < this.taille && y2 >= 0 && y2 < this.taille && this.grille[x2][y2] === null)
+        ) {
+            return false;
+        }
+    }
+    return true;
+}
 }
 
 class Pion {
