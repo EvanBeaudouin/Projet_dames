@@ -20,6 +20,7 @@ class Grille {
     }
 
     public afficherGrille(): void {
+        console.log("Mise à jour du jeu");
         let ligne = "";
         for (let k = 0; k < this.taille; k++) {
             ligne += "+-----";
@@ -242,7 +243,8 @@ class Pion {
 let test1 = new Grille();
 test1.afficherGrille();
 test1.deplacerPion(3, 1, "droite");
-console.log("Mis à jour de la grille");
 test1.afficherGrille();
 test1.deplacerPion(6, 0, "droite");
-
+test1.afficherGrille();
+test1.capturerPion(4,2,"gauche");
+test1.afficherGrille();
