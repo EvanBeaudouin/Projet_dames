@@ -126,3 +126,4 @@ let test1 = new Grille();
 test1.afficherGrille();
 test1.deplacerPion(3, 1, "droite");
 test1.afficherGrille();
+
