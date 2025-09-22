@@ -1,5 +1,4 @@
 import * as readlineSync from "readline-sync";
-
 class Pion {
     public type: "pion" | "dame";
     public couleur: "N" | "B";
