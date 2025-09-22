@@ -1,3 +1,28 @@
+import * as readlineSync from "readline-sync";
+
+class Pion {
+    public type: "pion" | "dame";
+    public couleur: "N" | "B";
+    public elimine: boolean;
+
+    constructor(couleur: "N" | "B") {
+        this.type = "pion";
+        this.couleur = couleur;
+        this.elimine = false;
+    }
+
+    public transformerEnDame(): void {
+        this.type = "dame";
+    }
+
+    public eliminer(): void {
+        this.elimine = true;
+    }
+
+    public getSymbole(): string {
+        return this.type === "dame" ? this.couleur + "D" : this.couleur;
+    }
+}
 class Grille {
     private grille: (Pion | null)[][];
     private taille: number;
@@ -20,28 +45,33 @@ class Grille {
     }
 
     public afficherGrille(): void {
-        console.log("Mise à jour du jeu");
-        let ligne = "";
-        for (let k = 0; k < this.taille; k++) {
-            ligne += "+-----";
-        }
-        ligne += "+";
-        for (let i = 0; i < this.taille; i++) {
-            console.log(ligne);
-            let row = "";
-            for (let j = 0; j < this.taille; j++) {
-                const casePion = this.grille[i][j];
-                let contenu = " ";
-                if (casePion !== null) {
-                    contenu = casePion.getSymbole();
-                }
-                row += `|  ${contenu}  `;
-            }
-            console.log(row + "|");
-        }
-        console.log(ligne);
+    console.log("Mise à jour du jeu");
+    let colonnes = "   ";
+    for (let c = 1; c <= this.taille; c++) {
+        colonnes += "  " + c + " ";
     }
+    console.log(colonnes);
+    let ligneSep = "  +";
+    for (let k = 0; k < this.taille; k++) {
+        ligneSep += "---+";
+    }
+    for (let i = 0; i < this.taille; i++) {
+        console.log(ligneSep);
+        let indiceLigne = (i + 1).toString();
+        if (indiceLigne.length < 2) indiceLigne = " " + indiceLigne;
 
+        let row = indiceLigne + "|";
+
+        for (let j = 0; j < this.taille; j++) {
+            const casePion = this.grille[i][j];
+            let contenu = casePion ? casePion.getSymbole() : " ";
+            row += " " + contenu + " |";
+        }
+
+        console.log(row);
+    }
+    console.log(ligneSep);
+}
     private placerPions(): void {
         for (let i = 0; i < 4; i++) {
             let start = i % 2;
@@ -219,7 +249,7 @@ public getGrille(): (Pion | null)[][] {
     return this.grille;
 }
 
-private joueurActuel: "N" | "B" = "N";
+private joueurActuel: "N" | "B" = "B";
 
 public getJoueurActuel(): "N" | "B" {
     return this.joueurActuel;
@@ -270,53 +300,99 @@ public estPartieTerminee(couleur: "N" | "B"): boolean {
     }
     return true;
 }
+public captureDisponible(couleur: "N" | "B"): boolean {
+    for (let i = 0; i < this.taille; i++) {
+        for (let j = 0; j < this.taille; j++) {
+            const pion = this.grille[i][j];
+            if (pion && pion.couleur === couleur && !pion.elimine) {
+                if (this.peutCapturer(i, j)) return true;
+            }
+        }
+    }
+    return false;
 }
-/*
+
+public peutCapturer(x: number, y: number): boolean {
+    const pion = this.grille[x][y];
+    if (!pion) return false;
+    const directions = [
+        {dx: 1, dy: 1}, {dx: 1, dy: -1},
+        {dx: -1, dy: 1}, {dx: -1, dy: -1}
+    ];
+    for (let dir of directions) {
+        const milieuX = x + dir.dx;
+        const milieuY = y + dir.dy;
+        const cibleX = x + 2 * dir.dx;
+        const cibleY = y + 2 * dir.dy;
+        if (cibleX >= 0 && cibleX < this.taille && cibleY >= 0 && cibleY < this.taille) {
+            const pionMilieu = this.grille[milieuX][milieuY];
+            if (pionMilieu && pionMilieu.couleur !== pion.couleur && this.grille[cibleX][cibleY] === null) return true;
+        }
+    }
+    return false;
+}
+
+}
+
 function jouerJeu() {
     const jeu = new Grille();
-    const grille = jeu.getGrille();
-    const joueur = jeu.getJoueurActuel();
     let partieTerminee = false;
 
     while (!partieTerminee) {
         jeu.afficherGrille();
         console.log(`Joueur actuel : ${jeu.getJoueurActuel()}`);
-        let capturePossible = false;
-        for (let i = 0; i < 10; i++) {
-            for (let j = 0; j < 10; j++) {
-                const pion = jeu.getGrille()[i][j];
-                if (pion && pion.couleur === jeu.getJoueurActuel() && !pion.elimine) {
-                    if (!jeu.pionBloque(i, j)) {
-                        capturePossible = true;
-                        break;
-                    }
-                }
-            }
-            if (capturePossible) break;
-        }
 
+        const capturePossible = jeu.captureDisponible(jeu.getJoueurActuel());
         let actionValide = false;
-        while (!actionValide) {
-            const x = Number(prompt("Entrez la ligne du pion :"));
-            const y = Number(prompt("Entrez la colonne du pion :"));
-            let direction: "gauche" | "droite" = prompt("Direction (gauche/droite) :") as any;
-            let cases: number | undefined;
 
+        while (!actionValide) {
+            let x: number;
+            let y: number;
+            while (true) {
+                x = Number(readlineSync.question("Entrez la ligne du pion (1-10) : ")) - 1;
+                y = Number(readlineSync.question("Entrez la colonne du pion (1-10) : ")) - 1;
+                if (x >= 0 && x < 10 && y >= 0 && y < 10) break;
+                console.log("Coordonnées invalides !");
+            }
+            let direction: "gauche" | "droite";
+            while (true) {
+                direction = readlineSync.question("Direction (gauche/droite) : ") as any;
+                if (direction === "gauche" || direction === "droite") break;
+                console.log("Direction invalide !");
+            }
+
+            let cases: number | undefined;
             const pion = jeu.getGrille()[x][y];
+
             if (!pion || pion.couleur !== jeu.getJoueurActuel()) {
                 console.log("Pion invalide !");
                 continue;
             }
 
             if (pion.type === "dame") {
-                cases = Number(prompt("Combien de cases pour la dame ?"));
+                while (true) {
+                    cases = Number(readlineSync.question("Combien de cases pour la dame ? "));
+                    if (!isNaN(cases) && cases > 0) break;
+                    console.log("Nombre de cases invalide !");
+                }
             }
 
             if (capturePossible) {
-                if (jeu.capturerPion(x, y, direction)) {
-                    actionValide = true;
-                } else {
-                    console.log("Capture obligatoire ! Coup invalide.");
+                let pionPeutCapturer = true;
+                while (pionPeutCapturer) {
+                    if (jeu.capturerPion(x, y, direction)) {
+                        actionValide = true;
+                        jeu.afficherGrille();
+                        if (jeu.peutCapturer(x, y)) {
+                            console.log("Vous pouvez encore capturer avec ce pion !");
+                            direction = readlineSync.question("Nouvelle direction (gauche/droite) : ") as any;
+                        } else {
+                            pionPeutCapturer = false;
+                        }
+                    } else {
+                        console.log("Capture obligatoire ! Coup invalide.");
+                        break;
+                    }
                 }
             } else {
                 if (jeu.deplacerPion(x, y, direction, cases)) {
@@ -326,46 +402,18 @@ function jouerJeu() {
                 }
             }
         }
+
         const adversaire = jeu.getJoueurActuel() === "N" ? "B" : "N";
         if (jeu.estPartieTerminee(adversaire)) {
             partieTerminee = true;
             console.log(`Partie terminée ! Le gagnant est ${jeu.getJoueurActuel()}`);
         } else {
             jeu.changerJoueur();
+            console.log(`Joueur suivant : ${jeu.getJoueurActuel()}`);
         }
     }
 }
+
+
+
 jouerJeu();
-*/
-class Pion {
-    public type: "pion" | "dame";
-    public couleur: "N" | "B";
-    public elimine: boolean;
-
-    constructor(couleur: "N" | "B") {
-        this.type = "pion";
-        this.couleur = couleur;
-        this.elimine = false;
-    }
-
-    public transformerEnDame(): void {
-        this.type = "dame";
-    }
-
-    public eliminer(): void {
-        this.elimine = true;
-    }
-
-    public getSymbole(): string {
-        return this.type === "dame" ? this.couleur + "D" : this.couleur;
-    }
-}
-
-let test1 = new Grille();
-test1.afficherGrille();
-test1.deplacerPion(3, 1, "droite");
-test1.afficherGrille();
-test1.deplacerPion(6, 0, "droite");
-test1.afficherGrille();
-test1.capturerPion(4,2,"gauche");
-test1.afficherGrille();
