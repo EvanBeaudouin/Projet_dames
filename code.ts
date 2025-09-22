@@ -147,7 +147,7 @@ class Grille {
         let checkX = x + stepX;
         let checkY = y + stepY;
 
-        while (checkX !== newX && checkY !== newY) {
+        while (checkX !== newX || checkY !== newY) {
             if (this.grille[checkX][checkY] !== null) {
                 console.log("Chemin bloqué pour la dame !");
                 return false;
@@ -214,19 +214,28 @@ public capturerPion(x: number, y: number, direction: "gauche" | "droite"): boole
 
     return true;
 }
+
+public getGrille(): (Pion | null)[][] {
+    return this.grille;
+}
+
 private joueurActuel: "N" | "B" = "N";
 
-private changerJoueur() {
+public getJoueurActuel(): "N" | "B" {
+    return this.joueurActuel;
+}
+
+public changerJoueur() {
     if (this.joueurActuel === "N") {
         this.joueurActuel = "B";
     } else {
         this.joueurActuel = "N";
     }
 }
-private pionBloque(x: number, y: number): boolean {
+public pionBloque(x: number, y: number): boolean {
     const pion = this.grille[x][y];
     if (!pion || pion.elimine) {
-        return true; // Pas de pion → considéré bloqué
+        return true;
     }
     const directions = [
         {dx: 1, dy: 1},   
@@ -248,8 +257,86 @@ private pionBloque(x: number, y: number): boolean {
     }
     return true;
 }
+public estPartieTerminee(couleur: "N" | "B"): boolean {
+    for (let i = 0; i < this.taille; i++) {
+        for (let j = 0; j < this.taille; j++) {
+            const pion = this.grille[i][j];
+            if (pion && pion.couleur === couleur && !pion.elimine) {
+                if (!this.pionBloque(i, j)) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
 }
+}
+/*
+function jouerJeu() {
+    const jeu = new Grille();
+    const grille = jeu.getGrille();
+    const joueur = jeu.getJoueurActuel();
+    let partieTerminee = false;
 
+    while (!partieTerminee) {
+        jeu.afficherGrille();
+        console.log(`Joueur actuel : ${jeu.getJoueurActuel()}`);
+        let capturePossible = false;
+        for (let i = 0; i < 10; i++) {
+            for (let j = 0; j < 10; j++) {
+                const pion = jeu.getGrille()[i][j];
+                if (pion && pion.couleur === jeu.getJoueurActuel() && !pion.elimine) {
+                    if (!jeu.pionBloque(i, j)) {
+                        capturePossible = true;
+                        break;
+                    }
+                }
+            }
+            if (capturePossible) break;
+        }
+
+        let actionValide = false;
+        while (!actionValide) {
+            const x = Number(prompt("Entrez la ligne du pion :"));
+            const y = Number(prompt("Entrez la colonne du pion :"));
+            let direction: "gauche" | "droite" = prompt("Direction (gauche/droite) :") as any;
+            let cases: number | undefined;
+
+            const pion = jeu.getGrille()[x][y];
+            if (!pion || pion.couleur !== jeu.getJoueurActuel()) {
+                console.log("Pion invalide !");
+                continue;
+            }
+
+            if (pion.type === "dame") {
+                cases = Number(prompt("Combien de cases pour la dame ?"));
+            }
+
+            if (capturePossible) {
+                if (jeu.capturerPion(x, y, direction)) {
+                    actionValide = true;
+                } else {
+                    console.log("Capture obligatoire ! Coup invalide.");
+                }
+            } else {
+                if (jeu.deplacerPion(x, y, direction, cases)) {
+                    actionValide = true;
+                } else {
+                    console.log("Déplacement invalide !");
+                }
+            }
+        }
+        const adversaire = jeu.getJoueurActuel() === "N" ? "B" : "N";
+        if (jeu.estPartieTerminee(adversaire)) {
+            partieTerminee = true;
+            console.log(`Partie terminée ! Le gagnant est ${jeu.getJoueurActuel()}`);
+        } else {
+            jeu.changerJoueur();
+        }
+    }
+}
+jouerJeu();
+*/
 class Pion {
     public type: "pion" | "dame";
     public couleur: "N" | "B";
